@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# client-bill-payments
 
-## Getting Started
+Frontend application for managing client bills and payments. Built with Next.js and React, this app talks to the [service-bill-payments](https://github.com/LuiLar/service-bill-payments) API to create bills, show pending bills, and display payment history.
 
-First, run the development server:
+Quick summary
+
+- Stack: Next.js, React 19, Tailwind CSS, TypeScript.
+- Purpose: UI for creating bills, marking them paid (through API), and viewing client bill lists.
+
+## Getting started
+
+#### Prerequisites
+
+- Node.js 18+ and npm or yarn.
+- Duplicate and rename `.env.example` to `.env`.
+- The `service-bill-payments` API running and reachable.
+- Set `NEXT_PUBLIC_API_URL` as the running API's URL.
+
+#### Install dependencies
+
+```bash
+cd client-bill-payments
+npm install
+```
+
+#### Run in development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000` in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### Build and run production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+#### Project structure (important files/folders)
 
-To learn more about Next.js, take a look at the following resources:
+- `app/` — Next.js app routes and pages.
+- `components/` — React components used across the app.
+- `context/` — provides API integration to components.
+- `lib/` — utility functions.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### API endpoints used by the frontend
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `POST /bills` — create a bill.
+- `POST /payments` — mark a bill as paid.
+- `GET /clients/:id/pending-bills` — fetch pending bills for a client.
+- `GET /clients/:id/payment-history` — fetch paid bills for a client.
 
-## Deploy on Vercel
+#### Notes and recommendations
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- The frontend expects `clientId` to be numeric when interacting with the API.
+- Didn't have time to add unit testing.
+- Didn't have time to implement memoize logic performance wise.
+- Alerts could be replaced by dialog modals.
