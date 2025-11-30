@@ -44,9 +44,7 @@ const PayBillForm = () => {
       )}
       onSubmit={handleSubmit}
     >
-      <h2 className="text-2xl font-bold my-4 w-full text-center">
-        Create New Bill
-      </h2>
+      <h2 className="text-2xl font-bold my-4 w-full text-center">Pay A Bill</h2>
 
       <div className="mb-4">
         <label className="block mb-2 font-semibold" htmlFor="clientId">

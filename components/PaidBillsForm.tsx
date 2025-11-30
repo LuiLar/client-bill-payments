@@ -83,24 +83,24 @@ const PaidBillsForm = () => {
         </button>
       </form>
 
-      <div className="p-6 rounded-lg shadow-md w-full max-w-4xl">
+      <div className="md:p-6 rounded-lg shadow-md w-full max-w-4xl">
         {paidBills.length > 0 ? (
           <table className="w-full table-auto border-collapse border border-gray-300">
             <thead>
               <tr>
-                <th className="border border-gray-300 px-4 py-2">
+                <th className="border border-gray-300 md:px-4 py-2">
                   Service Type
                 </th>
-                <th className="border border-gray-300 px-4 py-2">
+                <th className="border border-gray-300 md:px-4 py-2">
                   Billing Period
                 </th>
-                <th className="border border-gray-300 px-4 py-2">
+                <th className="border border-gray-300 md:px-4 py-2">
                   Amount Paid
                 </th>
-                <th className="border border-gray-300 px-4 py-2">
+                <th className="border border-gray-300 md:px-4 py-2">
                   Payment Date
                 </th>
-                <th className="border border-gray-300 px-4 py-2">Status</th>
+                <th className="border border-gray-300 md:px-4 py-2">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -112,19 +112,19 @@ const PaidBillsForm = () => {
                 )
                 .map((bill, index) => (
                   <tr key={index}>
-                    <td className="border border-gray-300 px-4 py-2">
+                    <td className="border border-gray-300 md:px-4 py-2 text-center">
                       {bill.serviceType}
                     </td>
-                    <td className="border border-gray-300 px-4 py-2">
+                    <td className="border border-gray-300 md:px-4 py-2 text-center">
                       {formatBillingPeriod(bill.billingPeriod)}
                     </td>
-                    <td className="border border-gray-300 px-4 py-2">
+                    <td className="border border-gray-300 md:px-4 py-2 text-center">
                       {formatCurrency(bill.amount)}
                     </td>
-                    <td className="border border-gray-300 px-4 py-2">
+                    <td className="border border-gray-300 md:px-4 py-2 text-center">
                       {new Date(bill.updatedAt).toLocaleDateString()}
                     </td>
-                    <td className="border border-gray-300 px-4 py-2 text-green-600 font-semibold">
+                    <td className="border border-gray-300 md:px-4 py-2 text-green-600 font-semibold text-center">
                       {bill.status}
                     </td>
                   </tr>

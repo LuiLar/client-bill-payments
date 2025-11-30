@@ -57,7 +57,7 @@ const TabsContainer = () => {
         })}
       </div>
 
-      <section className="w-full flex content-center justify-center mt-50">
+      <section className="w-full flex content-center justify-center mt-5 sm:mt-20 lg:mt-50">
         {activeTab.element}
       </section>
     </>

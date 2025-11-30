@@ -105,19 +105,19 @@ const PendingBillsForm = () => {
         </button>
       </form>
 
-      <div className="p-6 rounded-lg shadow-md w-full max-w-4xl">
+      <div className="md:p-6 rounded-lg shadow-md w-full max-w-4xl">
         {pendingBills.length > 0 ? (
           <table className="w-full table-auto border-collapse border border-gray-300">
             <thead>
               <tr>
-                <th className="border border-gray-300 px-4 py-2">
+                <th className="border border-gray-300 md:px-4 py-2">
                   Service Type
                 </th>
-                <th className="border border-gray-300 px-4 py-2">
+                <th className="border border-gray-300 md:px-4 py-2">
                   Billing Period
                 </th>
-                <th className="border border-gray-300 px-4 py-2">Amount</th>
-                <th className="border border-gray-300 px-4 py-2">
+                <th className="border border-gray-300 md:px-4 py-2">Amount</th>
+                <th className="border border-gray-300 md:px-4 py-2">
                   Current Status
                 </th>
               </tr>
@@ -125,24 +125,24 @@ const PendingBillsForm = () => {
             <tbody>
               {pendingBills.map((bill, index) => (
                 <tr key={index}>
-                  <td className="border border-gray-300 px-4 py-2">
+                  <td className="border border-gray-300 md:px-4 py-2 text-center">
                     {bill.serviceType}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
+                  <td className="border border-gray-300 md:px-4 py-2 text-center">
                     {formatBillingPeriod(bill.billingPeriod)}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
+                  <td className="border border-gray-300 md:px-4 py-2 text-center">
                     {formatCurrency(bill.amount)}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
+                  <td className="border border-gray-300 md:px-4 py-2 text-center">
                     {bill.status}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
+                  <td className="border border-gray-300 md:px-4 py-2 text-center">
                     <button
                       className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition-colors duration-300"
                       onClick={() => handlePayBill(bill)}
                     >
-                      Pay Now
+                      Pay
                     </button>
                   </td>
                 </tr>
