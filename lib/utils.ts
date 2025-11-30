@@ -13,7 +13,7 @@ export function formatBillingPeriod(billingPeriod: string): string {
 
   const date = new Date(Number(year), month - 1);
   return capitalizeFirstLetter(
-    date.toLocaleString("default", { month: "long", year: "numeric" })
+    date.toLocaleString("default", { month: "numeric", year: "numeric" })
   );
 }
 

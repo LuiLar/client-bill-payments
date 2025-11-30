@@ -26,23 +26,27 @@ type PayBillData = {
 };
 
 interface BillApiContextType {
-  createBill: (data: CreateBillData) => Promise<unknown>;
-  payBill: (data: PayBillData) => Promise<unknown>;
-  getPendingBills: (clientId: string) => Promise<unknown>;
-  getPaymentHistory: (clientId: string) => Promise<unknown>;
+  createBill: (data: CreateBillData) => Promise<{ error: string }>;
+  payBill: (data: PayBillData) => Promise<{ error: string }>;
+  getPendingBills: (clientId: string) => Promise<[] | { error: string }>;
+  getPaymentHistory: (clientId: string) => Promise<[] | { error: string }>;
 }
 
 const BillApiContext = createContext<BillApiContextType>({
-  createBill: async () => {},
-  payBill: async () => {},
-  getPendingBills: async () => {},
-  getPaymentHistory: async () => {},
+  createBill: async () => Promise.resolve({ error: "" }),
+  payBill: async () => Promise.resolve({ error: "" }),
+  getPendingBills: async () =>
+    Promise.resolve([]) || Promise.resolve({ error: "" }),
+  getPaymentHistory: async () =>
+    Promise.resolve([]) || Promise.resolve({ error: "" }),
 });
 
 const BillApiProvider = ({ children }: { children: React.ReactNode }) => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  const createBill = async (data: CreateBillData) => {
+  const createBill = async (
+    data: CreateBillData
+  ): Promise<{ error: string }> => {
     try {
       const response = await fetch(`${API_URL}/bills`, {
         method: "POST",
@@ -54,12 +58,11 @@ const BillApiProvider = ({ children }: { children: React.ReactNode }) => {
 
       return response.json();
     } catch (error) {
-      console.error("Error creating bill:", error);
       throw error;
     }
   };
 
-  const payBill = async (data: PayBillData) => {
+  const payBill = async (data: PayBillData): Promise<{ error: string }> => {
     try {
       const response = await fetch(`${API_URL}/payments`, {
         method: "POST",
@@ -71,12 +74,13 @@ const BillApiProvider = ({ children }: { children: React.ReactNode }) => {
 
       return response.json();
     } catch (error) {
-      console.error("Error paying bill:", error);
       throw error;
     }
   };
 
-  const getPendingBills = async (clientId: string) => {
+  const getPendingBills = async (
+    clientId: string
+  ): Promise<[] | { error: string }> => {
     try {
       const response = await fetch(
         `${API_URL}/clients/${clientId}/pending-bills`,
@@ -90,12 +94,13 @@ const BillApiProvider = ({ children }: { children: React.ReactNode }) => {
 
       return response.json();
     } catch (error) {
-      console.error("Error fetching pending bills:", error);
       throw error;
     }
   };
 
-  const getPaymentHistory = async (clientId: string) => {
+  const getPaymentHistory = async (
+    clientId: string
+  ): Promise<[] | { error: string }> => {
     try {
       const response = await fetch(
         `${API_URL}/clients/${clientId}/payment-history`,
@@ -109,7 +114,6 @@ const BillApiProvider = ({ children }: { children: React.ReactNode }) => {
 
       return response.json();
     } catch (error) {
-      console.error("Error fetching payment history:", error);
       throw error;
     }
   };

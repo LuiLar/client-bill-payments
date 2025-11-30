@@ -2,12 +2,7 @@
 
 import { useContext, useState } from "react";
 import { useTheme } from "next-themes";
-import {
-  capitalizeFirstLetter,
-  cn,
-  formatBillingPeriod,
-  formatCurrency,
-} from "@/lib/utils";
+import { cn, formatBillingPeriod, formatCurrency } from "@/lib/utils";
 import { BillApiContext, ServiceTypeEnum } from "@/context/BillApiProvider";
 
 type PendingBill = {
@@ -31,23 +26,44 @@ const PendingBillsForm = () => {
     try {
       const bills = await getPendingBills(String(formData.get("clientId")));
 
+      if (bills.hasOwnProperty("error")) {
+        throw new Error((bills as { error: string }).error as string);
+      }
+
+      if ((bills as []).length === 0) {
+        throw new Error("No pending bills found for this client.");
+      }
+
       setPendingBills(bills as PendingBill[]);
     } catch (error) {
-      console.error("Error fetching pending bills:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Error fetching pending bills. Please try again."
+      );
     }
   };
 
   const handlePayBill = async (bill: PendingBill) => {
     try {
-      await payBill({
+      const response = await payBill({
         clientId: bill.clientId as number,
         serviceType: bill.serviceType as ServiceTypeEnum,
         billingPeriod: bill.billingPeriod as string,
       });
 
+      if (response.hasOwnProperty("error")) {
+        throw new Error(response.error as string);
+      }
+
       setPendingBills([]);
+      alert("Bill paid successfully!");
     } catch (error) {
-      console.error("Error paying bill:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Error paying bill. Please try again."
+      );
     }
   };
 
@@ -101,7 +117,9 @@ const PendingBillsForm = () => {
                   Billing Period
                 </th>
                 <th className="border border-gray-300 px-4 py-2">Amount</th>
-                <th className="border border-gray-300 px-4 py-2">Status</th>
+                <th className="border border-gray-300 px-4 py-2">
+                  Current Status
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -117,7 +135,7 @@ const PendingBillsForm = () => {
                     {formatCurrency(bill.amount)}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {capitalizeFirstLetter(bill.status)}
+                    {bill.status}
                   </td>
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     <button

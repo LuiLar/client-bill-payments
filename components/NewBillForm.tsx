@@ -15,16 +15,25 @@ const NewBillForm = () => {
     const formData = new FormData(event.target as HTMLFormElement);
 
     try {
-      await createBill({
+      const response = await createBill({
         clientId: Number(formData.get("clientId")),
         serviceType: formData.get("serviceType") as ServiceTypeEnum,
         billingPeriod: formData.get("billingPeriod") as string,
         amount: Number(formData.get("amount")),
       });
 
+      if (response.hasOwnProperty("error")) {
+        throw new Error(response.error as string);
+      }
+
       (event.target as HTMLFormElement).reset();
+      alert("Bill created successfully!");
     } catch (error) {
-      console.error("Error creating bill:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Error creating bill. Please try again."
+      );
     }
   };
 
@@ -65,9 +74,10 @@ const NewBillForm = () => {
           id="serviceType"
           name="serviceType"
           className="w-full p-2 border border-gray-300 rounded"
+          defaultValue={""}
           required
         >
-          <option value="" disabled selected>
+          <option value="" disabled>
             Select a service type
           </option>
           <option value={ServiceTypeEnum.Water}>Water</option>
@@ -86,11 +96,15 @@ const NewBillForm = () => {
         </label>
         <input
           type="text"
+          pattern="2025(0[1-9]|1[0-2])"
+          placeholder="2025YMM"
           id="billingPeriod"
           name="billingPeriod"
           className="w-full p-2 border border-gray-300 rounded"
-          placeholder="YYYYMM"
           required
+          onInvalid={() =>
+            alert("Please select a month of year 2025 using YYYYMM format.")
+          }
         />
       </div>
 
@@ -100,7 +114,8 @@ const NewBillForm = () => {
         </label>
         <input
           type="number"
-          step="0.01"
+          step="0.1"
+          min="0"
           id="amount"
           name="amount"
           className="w-full p-2 border border-gray-300 rounded"

@@ -2,12 +2,7 @@
 
 import { useContext, useState } from "react";
 import { useTheme } from "next-themes";
-import {
-  capitalizeFirstLetter,
-  cn,
-  formatBillingPeriod,
-  formatCurrency,
-} from "@/lib/utils";
+import { cn, formatBillingPeriod, formatCurrency } from "@/lib/utils";
 import { BillApiContext } from "@/context/BillApiProvider";
 
 type PaidBill = {
@@ -16,6 +11,7 @@ type PaidBill = {
   billingPeriod: string;
   amount: number;
   status: string;
+  updatedAt: Date;
 };
 
 const PaidBillsForm = () => {
@@ -31,9 +27,21 @@ const PaidBillsForm = () => {
     try {
       const bills = await getPaymentHistory(String(formData.get("clientId")));
 
+      if (bills.hasOwnProperty("error")) {
+        throw new Error((bills as { error: string }).error as string);
+      }
+
+      if ((bills as []).length === 0) {
+        throw new Error("No paid bills found for this client.");
+      }
+
       setPaidBills(bills as PaidBill[]);
     } catch (error) {
-      console.error("Error fetching paid bills:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Error fetching paid bills. Please try again."
+      );
     }
   };
 
@@ -80,37 +88,47 @@ const PaidBillsForm = () => {
           <table className="w-full table-auto border-collapse border border-gray-300">
             <thead>
               <tr>
-                <th className="border border-gray-300 px-4 py-2">Client ID</th>
                 <th className="border border-gray-300 px-4 py-2">
                   Service Type
                 </th>
                 <th className="border border-gray-300 px-4 py-2">
                   Billing Period
                 </th>
-                <th className="border border-gray-300 px-4 py-2">Amount</th>
+                <th className="border border-gray-300 px-4 py-2">
+                  Amount Paid
+                </th>
+                <th className="border border-gray-300 px-4 py-2">
+                  Payment Date
+                </th>
                 <th className="border border-gray-300 px-4 py-2">Status</th>
               </tr>
             </thead>
             <tbody>
-              {paidBills.map((bill, index) => (
-                <tr key={index}>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {bill.clientId}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {bill.serviceType}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {formatBillingPeriod(bill.billingPeriod)}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {formatCurrency(bill.amount)}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 text-green-600 font-semibold">
-                    {capitalizeFirstLetter(bill.status)}
-                  </td>
-                </tr>
-              ))}
+              {paidBills
+                .sort(
+                  (a, b) =>
+                    new Date(a.updatedAt).getTime() -
+                    new Date(b.updatedAt).getTime()
+                )
+                .map((bill, index) => (
+                  <tr key={index}>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {bill.serviceType}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {formatBillingPeriod(bill.billingPeriod)}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {formatCurrency(bill.amount)}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {new Date(bill.updatedAt).toLocaleDateString()}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2 text-green-600 font-semibold">
+                      {bill.status}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         ) : (

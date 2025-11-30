@@ -15,15 +15,24 @@ const PayBillForm = () => {
     const formData = new FormData(event.target as HTMLFormElement);
 
     try {
-      await payBill({
+      const response = await payBill({
         clientId: Number(formData.get("clientId")),
         serviceType: formData.get("serviceType") as ServiceTypeEnum,
         billingPeriod: formData.get("billingPeriod") as string,
       });
 
+      if (response.hasOwnProperty("error")) {
+        throw new Error(response.error as string);
+      }
+
       (event.target as HTMLFormElement).reset();
+      alert("Bill paid successfully!");
     } catch (error) {
-      console.error("Error paying bill:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Error paying bill. Please try again."
+      );
     }
   };
 
@@ -64,9 +73,10 @@ const PayBillForm = () => {
           id="serviceType"
           name="serviceType"
           className="w-full p-2 border border-gray-300 rounded"
+          defaultValue={""}
           required
         >
-          <option value="" disabled selected>
+          <option value="" disabled>
             Select a service type
           </option>
           <option value={ServiceTypeEnum.Water}>Water</option>
@@ -85,11 +95,15 @@ const PayBillForm = () => {
         </label>
         <input
           type="text"
+          pattern="2025(0[1-9]|1[0-2])"
+          placeholder="2025YMM"
           id="billingPeriod"
           name="billingPeriod"
           className="w-full p-2 border border-gray-300 rounded"
-          placeholder="YYYYMM"
           required
+          onInvalid={() =>
+            alert("Please select a month of year 2025 using YYYYMM format.")
+          }
         />
       </div>
 
