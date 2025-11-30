@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export enum ServiceTypeEnum {
   Water = "Water",
@@ -25,7 +25,30 @@ type PayBillData = {
   billingPeriod: string;
 };
 
+type Client = {
+  id: number;
+  name: string;
+};
+
+type PaidBill = {
+  clientId: number;
+  serviceType: string;
+  billingPeriod: string;
+  amount: number;
+  status: string;
+  updatedAt: Date;
+};
+
+type PendingBill = {
+  clientId: number;
+  serviceType: string;
+  billingPeriod: string;
+  amount: number;
+  status: string;
+};
+
 interface BillApiContextType {
+  clients: Client[];
   createBill: (data: CreateBillData) => Promise<{ error: string }>;
   payBill: (data: PayBillData) => Promise<{ error: string }>;
   getPendingBills: (clientId: string) => Promise<[] | { error: string }>;
@@ -33,6 +56,7 @@ interface BillApiContextType {
 }
 
 const BillApiContext = createContext<BillApiContextType>({
+  clients: [],
   createBill: async () => Promise.resolve({ error: "" }),
   payBill: async () => Promise.resolve({ error: "" }),
   getPendingBills: async () =>
@@ -43,6 +67,27 @@ const BillApiContext = createContext<BillApiContextType>({
 
 const BillApiProvider = ({ children }: { children: React.ReactNode }) => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const [clients, setClients] = useState<Client[]>([]);
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await fetch(`${API_URL}/clients`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await response.json();
+        setClients(data);
+      } catch (error) {
+        console.error("Error fetching clients:", error);
+      }
+    };
+
+    fetchClients();
+  }, []);
 
   const createBill = async (
     data: CreateBillData
@@ -119,6 +164,7 @@ const BillApiProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const value = {
+    clients,
     createBill,
     payBill,
     getPendingBills,
@@ -130,4 +176,10 @@ const BillApiProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export { BillApiProvider, BillApiContext };
+export {
+  BillApiProvider,
+  BillApiContext,
+  type Client,
+  type PaidBill,
+  type PendingBill,
+};

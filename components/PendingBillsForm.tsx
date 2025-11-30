@@ -3,20 +3,17 @@
 import { useContext, useState } from "react";
 import { useTheme } from "next-themes";
 import { cn, formatBillingPeriod, formatCurrency } from "@/lib/utils";
-import { BillApiContext, ServiceTypeEnum } from "@/context/BillApiProvider";
-
-type PendingBill = {
-  clientId: number;
-  serviceType: string;
-  billingPeriod: string;
-  amount: number;
-  status: string;
-};
+import {
+  BillApiContext,
+  ServiceTypeEnum,
+  Client,
+  PendingBill,
+} from "@/context/BillApiProvider";
 
 const PendingBillsForm = () => {
   const [pendingBills, setPendingBills] = useState<PendingBill[]>([]);
   const { theme } = useTheme();
-  const { getPendingBills, payBill } = useContext(BillApiContext);
+  const { clients, getPendingBills, payBill } = useContext(BillApiContext);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -84,17 +81,22 @@ const PendingBillsForm = () => {
           <label className="block mb-2 font-semibold" htmlFor="clientId">
             Client ID
           </label>
-          <input
-            type="number"
-            min="100"
-            max="500"
-            step="100"
-            defaultValue={100}
+          <select
             id="clientId"
             name="clientId"
             className="w-full p-2 border border-gray-300 rounded"
+            defaultValue={""}
             required
-          />
+          >
+            <option value="" disabled>
+              Select a client
+            </option>
+            {clients.map((client: Client) => (
+              <option key={client.id} value={client.id}>
+                {client.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <button
