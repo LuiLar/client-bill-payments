@@ -87,7 +87,7 @@ const BillApiProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     fetchClients();
-  }, []);
+  }, [API_URL]);
 
   const createBill = async (
     data: CreateBillData

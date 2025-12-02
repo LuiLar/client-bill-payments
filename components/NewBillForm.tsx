@@ -106,7 +106,7 @@ const NewBillForm = () => {
         <input
           type="text"
           pattern="2025(0[1-9]|1[0-2])"
-          placeholder="2025YMM"
+          placeholder="2025MM"
           id="billingPeriod"
           name="billingPeriod"
           className="w-full p-2 border border-gray-300 rounded"
